@@ -3,3 +3,16 @@
     <router-view />
   </main>
 </template>
+
+<script>
+import { mapActions } from "vuex";
+
+export default {
+  methods: {
+    ...mapActions(["initializeTests"]),
+  },
+  mounted() {
+    this.initializeTests();
+  },
+};
+</script>

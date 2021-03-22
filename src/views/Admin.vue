@@ -1,27 +1,15 @@
 <template>
   <div class="tester bg-white shadow-lg flex flex-col">
-    <div class="flex justify-between items-center p-4">
-      <h1 class="text-2xl">Test Runner - Admin</h1>
-      <router-link
-        to="/"
-        class="bg-green-300 rounded hover:bg-green-400 py-1 px-4"
-        >Tester</router-link
-      >
-    </div>
-    <hr />
-    <div class="">
+    <Header>Admin</Header>
+    <div class="flex-grow overflow-y-scroll">
       <div class="p-4">
         <h2 class="text-xl">Tests</h2>
-        <ul>
-          <li
-            v-for="test in getTests"
-            :key="test.id"
-            class="flex items-center py-1"
-          >
-            {{ test.description }}
-          </li>
-        </ul>
-        <hr />
+        <TestList :tests="getTests" />
+      </div>
+    </div>
+    <hr />
+    <div class="p-4">
+      <form @submit.prevent="addTestHandler">
         <label>
           <h2 class="py-2 text-xl">Add Test:</h2>
           <div class="flex items-center">
@@ -43,13 +31,15 @@
             </button>
           </div>
         </label>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Header from "@/components/Header";
+import TestList from "@/components/TestList";
 
 export default {
   data() {
@@ -72,12 +62,16 @@ export default {
       this.description = "";
     },
   },
+  components: {
+    Header,
+    TestList,
+  },
 };
 </script>
 
 <style lang="postcss" scoped>
 .tester {
   width: 900px;
-  min-height: 800px;
+  min-height: 600px;
 }
 </style>

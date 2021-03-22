@@ -42,7 +42,22 @@ export default {
     tests: [],
   },
   getters: {
-    getTests: (state) => state.tests,
+    getTests: (state) => {
+      return [...state.tests].sort((a, b) => {
+        if (a.status === b.status) return 0;
+
+        if (a.status === "RUNNING") return -1;
+        if (b.status === "RUNNING") return 1;
+
+        if (a.status === "SUCCESS") return -1;
+        if (b.status === "SUCCESS") return 1;
+
+        if (a.status === "FAILURE") return -1;
+        if (b.status === "FAILURE") return 1;
+
+        return 0;
+      });
+    },
     nextTestId: (state) => state.tests.length + 1,
     testRunnerStatus: (state) => {
       if (!state.tests.find((test) => test.status !== "IDLE")) {

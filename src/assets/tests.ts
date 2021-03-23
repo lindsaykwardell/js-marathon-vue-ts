@@ -1,7 +1,7 @@
 export interface Test {
   id: number;
   description: string;
-  status: string;
+  status: "IDLE" | "RUNNING" | "SUCCESS" | "FAILURE";
   results: boolean[];
 }
 

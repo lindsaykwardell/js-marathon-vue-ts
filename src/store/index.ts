@@ -146,7 +146,7 @@ export type Store = Omit<
 } & {
   dispatch<K extends keyof Actions>(
     key: K,
-    payload: Parameters<Actions[K]>[1],
+    payload?: Parameters<Actions[K]>[1],
     options?: DispatchOptions
   ): ReturnType<Actions[K]>;
 } & {
@@ -155,12 +155,16 @@ export type Store = Omit<
   };
 };
 
-export default createStore({
+const store = createStore({
   state,
   getters,
   mutations,
   actions,
 });
+
+export const useStore = () => store as Store;
+
+export default store;
 
 const waitfor = async (time: number): Promise<void> =>
   new Promise((resolve) =>

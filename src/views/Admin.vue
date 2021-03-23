@@ -36,37 +36,40 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapActions } from "vuex";
-import Header from "@/components/Header";
-import TestList from "@/components/TestList";
+<script lang="ts">
+import { defineComponent, computed, ref } from "vue";
+import { useStore } from "@/store";
+import Header from "@/components/Header.vue";
+import TestList from "@/components/TestList.vue";
 
-export default {
-  data() {
-    return {
-      description: "",
-    };
-  },
-  computed: {
-    ...mapGetters(["getTests"]),
-  },
-  methods: {
-    ...mapActions(["addTest"]),
-    addTestHandler() {
-      this.addTest({
-        description: this.description,
+export default defineComponent({
+  setup() {
+    const store = useStore();
+    const description = ref("");
+    const getTests = computed(() => store.getters.getTests);
+
+    const addTestHandler = () => {
+      store.dispatch("addTest", {
+        id: -1,
+        description: description.value,
         results: [],
         status: "IDLE",
       });
 
-      this.description = "";
-    },
+      description.value = "";
+    };
+
+    return {
+      getTests,
+      description,
+      addTestHandler,
+    };
   },
   components: {
     Header,
     TestList,
   },
-};
+});
 </script>
 
 <style lang="postcss" scoped>

@@ -12,18 +12,20 @@
   </ul>
 </template>
 
-<script>
-import Spinner from "./Spinner";
+<script lang="ts">
+import Spinner from "./Spinner.vue";
+import { Test } from "@/assets/tests";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   props: {
     tests: {
-      type: Array,
+      type: Array as () => Test[],
       default: () => [],
     },
   },
   methods: {
-    testClass(test) {
+    testClass(test: Test) {
       if (test.status === "SUCCESS") {
         return "text-green-600 italic test-passed";
       } else if (test.status === "FAILURE") {
@@ -36,7 +38,7 @@ export default {
   components: {
     Spinner,
   },
-};
+});
 </script>
 
 <style lang="postcss" scoped>

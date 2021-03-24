@@ -19,7 +19,6 @@
               placeholder="Test description"
             />
             <button
-              @click="addTestHandler"
               class="py-1 px-4 rounded"
               :class="{
                 'text-green-700 bg-green-200': !description.length,

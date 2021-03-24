@@ -24,10 +24,12 @@
   </div>
 </template>
 
-<script>
-import Spinner from "./Spinner";
+<script lang="ts">
+import { defineComponent } from "vue";
+import { Test } from "@/assets/tests";
+import Spinner from "./Spinner.vue";
 
-export default {
+export default defineComponent({
   emits: ["initTests"],
   props: {
     testRunnerStatus: {
@@ -35,7 +37,7 @@ export default {
       default: "IDLE",
     },
     tests: {
-      type: Array,
+      type: Array as () => Test[],
       default: () => [],
     },
   },
@@ -45,18 +47,18 @@ export default {
         return "bg-green-300 cursor-not-allowed";
       else return "bg-green-500 hover:bg-green-400";
     },
-    totalRunningTests() {
+    totalRunningTests(): number {
       return this.tests.filter((test) => test.status === "RUNNING").length;
     },
-    totalPassedTests() {
+    totalPassedTests(): number {
       return this.tests.filter((test) => test.status === "SUCCESS").length;
     },
-    totalFailedTests() {
+    totalFailedTests(): number {
       return this.tests.filter((test) => test.status === "FAILURE").length;
     },
   },
   components: {
     Spinner,
   },
-};
+});
 </script>

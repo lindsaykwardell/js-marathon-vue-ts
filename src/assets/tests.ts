@@ -1,4 +1,11 @@
-export const getInitialTests = async () => [
+export interface Test {
+  id: number;
+  description: string;
+  status: "IDLE" | "RUNNING" | "SUCCESS" | "FAILURE";
+  results: boolean[];
+}
+
+export const getInitialTests = async (): Promise<Test[]> => [
   {
     id: 1,
     description: "Vue views are viewable",

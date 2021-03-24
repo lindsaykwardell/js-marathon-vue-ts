@@ -1,11 +1,30 @@
-import { createStore } from "vuex";
-import { getInitialTests } from "../assets/tests";
+import {
+  createStore,
+  MutationTree,
+  ActionContext,
+  ActionTree,
+  GetterTree,
+  Store as VuexStore,
+  CommitOptions,
+  DispatchOptions,
+} from "vuex";
+import { getInitialTests, Test } from "../assets/tests";
 
-const state = {
+interface State {
+  tests: Test[];
+}
+
+const state: State = {
   tests: [],
 };
 
-const getters = {
+interface Getters {
+  getTests(state: State): Test[];
+  nextTestId(state: State): number;
+  testRunnerStatus(state: State): "IDLE" | "RUNNING" | "FINISHED";
+}
+
+const getters: GetterTree<State, State> & Getters = {
   getTests: (state) => {
     return [...state.tests].sort((a, b) => {
       if (a.status === b.status) return 0;
@@ -34,7 +53,15 @@ const getters = {
   },
 };
 
-const mutations = {
+interface Mutations<S = State> {
+  SET_TESTS(state: S, tests: Test[]): void;
+  ADD_TEST(state: S, test: Test): void;
+  UPDATE_TEST(state: S, updatedTest: Test): void;
+  REMOVE_TEST(state: S, testId: number): void;
+  STORE_RESULT(state: S, payload: { testId: number; result: boolean }): void;
+}
+
+const mutations: MutationTree<State> & Mutations = {
   SET_TESTS(state, tests) {
     if (!state.tests.length) {
       state.tests = [...tests];
@@ -64,7 +91,26 @@ const mutations = {
   },
 };
 
-const actions = {
+type AugmentedActionContext = {
+  commit<K extends keyof Mutations>(
+    key: K,
+    payload: Parameters<Mutations[K]>[1]
+  ): ReturnType<Mutations[K]>;
+  getters: {
+    [K in keyof Getters]: ReturnType<Getters[K]>;
+  };
+} & Omit<ActionContext<State, State>, "commit" | "getters">;
+
+interface Actions {
+  initializeTests(
+    context: AugmentedActionContext,
+    payload: Test[]
+  ): Promise<void>;
+  addTest(context: AugmentedActionContext, payload: Test): void;
+  runTests(context: AugmentedActionContext): void;
+}
+
+const actions: ActionTree<State, State> & Actions = {
   async initializeTests({ commit }) {
     commit("SET_TESTS", await getInitialTests());
   },
@@ -88,14 +134,37 @@ const actions = {
   },
 };
 
-export default createStore({
+export type Store = Omit<
+  VuexStore<State>,
+  "getters" | "commit" | "dispatch"
+> & {
+  commit<K extends keyof Mutations, P extends Parameters<Mutations[K]>[1]>(
+    key: K,
+    payload: P,
+    options?: CommitOptions
+  ): ReturnType<Mutations[K]>;
+} & {
+  dispatch<K extends keyof Actions>(
+    key: K,
+    payload?: Parameters<Actions[K]>[1],
+    options?: DispatchOptions
+  ): ReturnType<Actions[K]>;
+} & {
+  getters: {
+    [K in keyof Getters]: ReturnType<Getters[K]>;
+  };
+};
+
+const store: Store = createStore({
   state,
   getters,
   mutations,
   actions,
 });
 
-const waitfor = async (time) =>
+export default store;
+
+const waitfor = async (time: number): Promise<void> =>
   new Promise((resolve) =>
     setTimeout(() => {
       resolve();

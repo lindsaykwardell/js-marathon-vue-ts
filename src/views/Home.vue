@@ -25,30 +25,36 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapActions } from "vuex";
-import Header from "@/components/Header";
-import TestList from "@/components/TestList";
-import TestRunner from "@/components/TestRunner";
+<script lang="ts">
+import { computed, defineComponent } from "vue";
+import store from "@/store";
+import Header from "@/components/Header.vue";
+import TestList from "@/components/TestList.vue";
+import TestRunner from "@/components/TestRunner.vue";
 
-export default {
-  computed: {
-    ...mapGetters(["getTests", "testRunnerStatus"]),
-  },
-  methods: {
-    ...mapActions(["runTests"]),
-    async initTests() {
-      if (this.testRunnerStatus === "RUNNING") return;
+export default defineComponent({
+  setup() {
+    const testRunnerStatus = computed(() => store.getters.testRunnerStatus);
+    const getTests = computed(() => store.getters.getTests);
 
-      this.runTests();
-    },
+    async function initTests(): Promise<void> {
+      if (testRunnerStatus.value === "RUNNING") return;
+
+      store.dispatch("runTests");
+    }
+
+    return {
+      testRunnerStatus,
+      getTests,
+      initTests,
+    };
   },
   components: {
     TestList,
     Header,
     TestRunner,
   },
-};
+});
 </script>
 
 <style lang="postcss" scoped>

@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Test } from '@/assets/tests'
+import { Test } from "@/assets/tests";
 import Spinner from "./Spinner.vue";
 
 export default defineComponent({

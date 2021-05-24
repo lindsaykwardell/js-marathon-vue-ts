@@ -10,7 +10,9 @@ import {
 } from "vuex";
 import { getInitialTests, Test } from "../assets/tests";
 
-interface State {
+import moduleStore, { ModuleStore } from "./module";
+
+export interface State {
   tests: Test[];
 }
 
@@ -18,7 +20,7 @@ const state: State = {
   tests: [],
 };
 
-interface Getters {
+export interface Getters {
   getTests(state: State): Test[];
   nextTestId(state: State): number;
   testRunnerStatus(state: State): "IDLE" | "RUNNING" | "FINISHED";
@@ -53,7 +55,7 @@ const getters: GetterTree<State, State> & Getters = {
   },
 };
 
-interface Mutations<S = State> {
+export interface Mutations<S = State> {
   SET_TESTS(state: S, tests: Test[]): void;
   ADD_TEST(state: S, test: Test): void;
   UPDATE_TEST(state: S, updatedTest: Test): void;
@@ -101,7 +103,7 @@ type AugmentedActionContext = {
   };
 } & Omit<ActionContext<State, State>, "commit" | "getters">;
 
-interface Actions {
+export interface Actions {
   initializeTests(
     context: AugmentedActionContext,
     payload: Test[]
@@ -153,13 +155,16 @@ export type Store = Omit<
   getters: {
     [K in keyof Getters]: ReturnType<Getters[K]>;
   };
-};
+} & ModuleStore;
 
 const store: Store = createStore({
   state,
   getters,
   mutations,
   actions,
+  modules: {
+    moduleStore,
+  },
 });
 
 export default store;

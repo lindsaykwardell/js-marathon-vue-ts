@@ -27,13 +27,15 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import store from "@/store";
+import { Store } from "@/store";
+import { useStore } from "vuex";
 import Header from "@/components/Header.vue";
 import TestList from "@/components/TestList.vue";
 import TestRunner from "@/components/TestRunner.vue";
 
 export default defineComponent({
   setup() {
+    const store: Store = useStore();
     const testRunnerStatus = computed(() => store.getters.testRunnerStatus);
     const getTests = computed(() => store.getters.getTests);
 
